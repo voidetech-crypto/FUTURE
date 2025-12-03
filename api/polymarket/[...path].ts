@@ -20,8 +20,8 @@ export const config = {
   runtime: "edge",
 };
 
-// Export the fetch handler for Vercel
-export default {
-  fetch: app.fetch,
+// Vercel Edge Function export
+export default async (request: Request) => {
+  return app.fetch(request);
 };
 
