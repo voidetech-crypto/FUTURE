@@ -2,7 +2,7 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { handle } from "hono/vercel";
-import polymarketRouter from "../../src/react-app/api/polymarket";
+import polymarketRouter from "../../src/worker/api/polymarket";
 
 const app = new Hono();
 
