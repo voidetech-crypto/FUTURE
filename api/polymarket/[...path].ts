@@ -21,13 +21,32 @@ export const config = {
 };
 
 // Vercel Edge Function export
-// Vercel passes the request with the path already stripped of /api/polymarket
-export default async (request: Request) => {
-  // Create a new request with the path relative to /api/polymarket
+// Vercel routes /api/polymarket/* to this file
+export default async (request: Request, context: { params?: { path?: string[] } }) => {
   const url = new URL(request.url);
-  const pathAfterApi = url.pathname.replace(/^\/api\/polymarket/, '') || '/';
-  const newUrl = new URL(pathAfterApi + url.search, url.origin);
-  const newRequest = new Request(newUrl.toString(), {
+  
+  // Extract the path after /api/polymarket
+  // For /api/polymarket/user/0x123/profile, pathname is "/api/polymarket/user/0x123/profile"
+  // We need "/user/0x123/profile"
+  let pathAfterApi = url.pathname.replace(/^\/api\/polymarket/, '') || '/';
+  
+  // If path is empty, make it "/"
+  if (!pathAfterApi || pathAfterApi === '') {
+    pathAfterApi = '/';
+  }
+  
+  // Ensure path starts with "/"
+  if (!pathAfterApi.startsWith('/')) {
+    pathAfterApi = '/' + pathAfterApi;
+  }
+  
+  // Create new URL with the stripped path
+  // Use a dummy base URL since we only care about the path
+  const baseUrl = 'https://example.com';
+  const newUrl = new URL(pathAfterApi + url.search, baseUrl);
+  
+  // Create a new request with the correct path
+  const newRequest = new Request(newUrl.pathname + newUrl.search, {
     method: request.method,
     headers: request.headers,
     body: request.body,
