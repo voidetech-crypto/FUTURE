@@ -1,7 +1,6 @@
 // Vercel API Route - handles all /api/polymarket/* requests
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { handle } from "hono/vercel";
 import polymarketRouter from "../../src/worker/api/polymarket";
 
 const app = new Hono();
@@ -17,9 +16,7 @@ app.use("*", cors({
 app.route("/", polymarketRouter);
 
 // Export as Vercel Edge Function
-export const config = {
-  runtime: "edge",
-};
+export const runtime = "edge";
 
-export default handle(app);
+export default app;
 
