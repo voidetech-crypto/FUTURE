@@ -42,17 +42,28 @@ export default async (request: Request) => {
       pathAfterApi = '/' + pathAfterApi;
     }
     
-    // Create a new request URL with just the path after /api/polymarket
-    // Use the original request URL as base but modify the pathname
-    const newUrl = new URL(request.url);
-    newUrl.pathname = pathAfterApi;
+    // Debug logging
+    console.log('[API Route] Processing request:', {
+      originalPath: url.pathname,
+      pathAfterApi,
+      search: url.search
+    });
+    
+    // Create a new request with the modified path
+    // Hono needs the full URL, so we'll use the original URL but modify how we pass it
+    // Create a new URL with the stripped path
+    const baseUrl = url.origin;
+    const newPath = pathAfterApi + url.search;
+    const newRequestUrl = baseUrl + newPath;
     
     // Create a new request with the modified URL
-    const newRequest = new Request(newUrl.toString(), {
+    const newRequest = new Request(newRequestUrl, {
       method: request.method,
       headers: request.headers,
       body: request.body,
     });
+    
+    console.log('[API Route] New request URL:', newRequestUrl);
     
     const response = await app.fetch(newRequest);
     
