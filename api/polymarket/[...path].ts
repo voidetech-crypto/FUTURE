@@ -1,7 +1,7 @@
 // Vercel API Route - handles all /api/polymarket/* requests
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import polymarketRouter from "../../src/worker/api/polymarket.js";
+import polymarketRouter from "./router.js";
 
 const app = new Hono();
 
