@@ -41,12 +41,13 @@ export default async (request: Request) => {
       pathAfterApi = '/' + pathAfterApi;
     }
     
-    // Create a new request with the modified path
-    // Use a relative URL that Hono can understand
-    const newUrl = new URL(pathAfterApi + url.search, 'http://localhost');
+    // Create a new request URL with the stripped path
+    // Use the original origin but replace the pathname
+    const newUrl = new URL(request.url);
+    newUrl.pathname = pathAfterApi;
     
     // Create a new request with the modified URL
-    const newRequest = new Request(newUrl.pathname + newUrl.search, {
+    const newRequest = new Request(newUrl.toString(), {
       method: request.method,
       headers: request.headers,
       body: request.body,
@@ -54,7 +55,7 @@ export default async (request: Request) => {
     
     const response = await app.fetch(newRequest);
     
-    // If we get a 404, return a proper JSON error instead of letting it fall through
+    // Always return JSON, even for 404s
     if (response.status === 404) {
       return new Response(JSON.stringify({ 
         success: false, 
