@@ -22,39 +22,56 @@ export const config = {
 
 // Vercel Edge Function export
 // Vercel routes /api/polymarket/* to this file
+// The [...path] catch-all means the full path is in the URL
 export default async (request: Request) => {
-  const url = new URL(request.url);
-  
-  // Extract the path after /api/polymarket
-  // For /api/polymarket/user/0x123/profile, pathname is "/api/polymarket/user/0x123/profile"
-  // We need "/user/0x123/profile"
-  let pathAfterApi = url.pathname.replace(/^\/api\/polymarket/, '') || '/';
-  
-  // If path is empty, make it "/"
-  if (!pathAfterApi || pathAfterApi === '') {
-    pathAfterApi = '/';
+  try {
+    const url = new URL(request.url);
+    
+    // Extract the path after /api/polymarket
+    // For /api/polymarket/user/0x123/profile, pathname is "/api/polymarket/user/0x123/profile"
+    // We need "/user/0x123/profile"
+    let pathAfterApi = url.pathname.replace(/^\/api\/polymarket/, '') || '/';
+    
+    // If path is empty, make it "/"
+    if (!pathAfterApi || pathAfterApi === '') {
+      pathAfterApi = '/';
+    }
+    
+    // Ensure path starts with "/"
+    if (!pathAfterApi.startsWith('/')) {
+      pathAfterApi = '/' + pathAfterApi;
+    }
+    
+    // Create a new request URL with just the path after /api/polymarket
+    // Use the original request URL as base but modify the pathname
+    const newUrl = new URL(request.url);
+    newUrl.pathname = pathAfterApi;
+    
+    // Create a new request with the modified URL
+    const newRequest = new Request(newUrl.toString(), {
+      method: request.method,
+      headers: request.headers,
+      body: request.body,
+    });
+    
+    const response = await app.fetch(newRequest);
+    
+    // If we get a 404, it means the route wasn't found
+    // Log for debugging
+    if (response.status === 404) {
+      console.error('[API Route] 404 for path:', pathAfterApi, 'Original:', url.pathname);
+    }
+    
+    return response;
+  } catch (error) {
+    console.error('[API Route] Error:', error);
+    return new Response(JSON.stringify({ 
+      success: false, 
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' },
+    });
   }
-  
-  // Ensure path starts with "/"
-  if (!pathAfterApi.startsWith('/')) {
-    pathAfterApi = '/' + pathAfterApi;
-  }
-  
-  // Construct the new URL with the stripped path
-  // Preserve the original origin and protocol
-  const newPath = pathAfterApi + url.search;
-  const newUrl = new URL(newPath, request.url);
-  
-  // Create a new request with the modified URL
-  const newRequest = new Request(newUrl, {
-    method: request.method,
-    headers: request.headers,
-    body: request.body,
-    // @ts-ignore - Vercel Edge Functions support these
-    cf: request.cf,
-    redirect: request.redirect,
-  });
-  
-  return app.fetch(newRequest);
 };
 
