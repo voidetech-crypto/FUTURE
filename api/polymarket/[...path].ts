@@ -22,7 +22,6 @@ export const config = {
 
 // Vercel Edge Function export
 // Vercel routes /api/polymarket/* to this file
-// The [...path] catch-all means the full path is in the URL
 export default async (request: Request) => {
   try {
     const url = new URL(request.url);
@@ -42,35 +41,28 @@ export default async (request: Request) => {
       pathAfterApi = '/' + pathAfterApi;
     }
     
-    // Debug logging
-    console.log('[API Route] Processing request:', {
-      originalPath: url.pathname,
-      pathAfterApi,
-      search: url.search
-    });
-    
     // Create a new request with the modified path
-    // Hono needs the full URL, so we'll use the original URL but modify how we pass it
-    // Create a new URL with the stripped path
-    const baseUrl = url.origin;
-    const newPath = pathAfterApi + url.search;
-    const newRequestUrl = baseUrl + newPath;
+    // Use a relative URL that Hono can understand
+    const newUrl = new URL(pathAfterApi + url.search, 'http://localhost');
     
     // Create a new request with the modified URL
-    const newRequest = new Request(newRequestUrl, {
+    const newRequest = new Request(newUrl.pathname + newUrl.search, {
       method: request.method,
       headers: request.headers,
       body: request.body,
     });
     
-    console.log('[API Route] New request URL:', newRequestUrl);
-    
     const response = await app.fetch(newRequest);
     
-    // If we get a 404, it means the route wasn't found
-    // Log for debugging
+    // If we get a 404, return a proper JSON error instead of letting it fall through
     if (response.status === 404) {
-      console.error('[API Route] 404 for path:', pathAfterApi, 'Original:', url.pathname);
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: `Route not found: ${pathAfterApi}` 
+      }), {
+        status: 404,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
     
     return response;
