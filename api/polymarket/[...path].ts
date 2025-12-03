@@ -22,7 +22,7 @@ export const config = {
 
 // Vercel Edge Function export
 // Vercel routes /api/polymarket/* to this file
-export default async (request: Request, context: { params?: { path?: string[] } }) => {
+export default async (request: Request) => {
   const url = new URL(request.url);
   
   // Extract the path after /api/polymarket
@@ -40,16 +40,19 @@ export default async (request: Request, context: { params?: { path?: string[] } 
     pathAfterApi = '/' + pathAfterApi;
   }
   
-  // Create new URL with the stripped path
-  // Use a dummy base URL since we only care about the path
-  const baseUrl = 'https://example.com';
-  const newUrl = new URL(pathAfterApi + url.search, baseUrl);
+  // Construct the new URL with the stripped path
+  // Preserve the original origin and protocol
+  const newPath = pathAfterApi + url.search;
+  const newUrl = new URL(newPath, request.url);
   
-  // Create a new request with the correct path
-  const newRequest = new Request(newUrl.pathname + newUrl.search, {
+  // Create a new request with the modified URL
+  const newRequest = new Request(newUrl, {
     method: request.method,
     headers: request.headers,
     body: request.body,
+    // @ts-ignore - Vercel Edge Functions support these
+    cf: request.cf,
+    redirect: request.redirect,
   });
   
   return app.fetch(newRequest);
