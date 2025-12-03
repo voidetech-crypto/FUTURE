@@ -16,7 +16,12 @@ app.use("*", cors({
 app.route("/", polymarketRouter);
 
 // Export as Vercel Edge Function
-export const runtime = "edge";
+export const config = {
+  runtime: "edge",
+};
 
-export default app;
+// Export the fetch handler for Vercel
+export default {
+  fetch: app.fetch,
+};
 
