@@ -22,7 +22,8 @@ export const config = {
 
 // Vercel Edge Function export
 // Vercel routes /api/polymarket/* to this file
-export default async (request: Request) => {
+// The [...path] means Vercel passes the path as a parameter
+export default async (request: Request, context?: { params?: { path?: string[] } }) => {
   try {
     const url = new URL(request.url);
     
@@ -41,8 +42,8 @@ export default async (request: Request) => {
       pathAfterApi = '/' + pathAfterApi;
     }
     
-    // Create a new request URL with the stripped path
-    // Use the original origin but replace the pathname
+    // Create a new request with the modified path
+    // Hono needs a full URL, so construct it properly
     const newUrl = new URL(request.url);
     newUrl.pathname = pathAfterApi;
     
@@ -53,13 +54,19 @@ export default async (request: Request) => {
       body: request.body,
     });
     
+    // Call Hono app with the modified request
     const response = await app.fetch(newRequest);
     
     // Always return JSON, even for 404s
     if (response.status === 404) {
       return new Response(JSON.stringify({ 
         success: false, 
-        error: `Route not found: ${pathAfterApi}` 
+        error: `Route not found: ${pathAfterApi}`,
+        debug: {
+          originalPath: url.pathname,
+          pathAfterApi,
+          search: url.search
+        }
       }), {
         status: 404,
         headers: { 'Content-Type': 'application/json' },
