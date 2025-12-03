@@ -13,8 +13,8 @@ app.use("*", cors({
   allowHeaders: ["Content-Type", "Authorization"],
 }));
 
-// Mount API routes
-app.route("/api/polymarket", polymarketRouter);
+// Mount API routes at root since Vercel already handles /api/polymarket prefix
+app.route("/", polymarketRouter);
 
 // Export as Vercel Edge Function
 export const config = {
