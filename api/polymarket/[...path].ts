@@ -12,7 +12,7 @@ app.use("*", cors({
   allowHeaders: ["Content-Type", "Authorization"],
 }));
 
-// Mount API routes at root since Vercel already handles /api/polymarket prefix
+// Mount API routes - the path after /api/polymarket is passed directly
 app.route("/", polymarketRouter);
 
 // Export as Vercel Edge Function
@@ -21,7 +21,18 @@ export const config = {
 };
 
 // Vercel Edge Function export
+// Vercel passes the request with the path already stripped of /api/polymarket
 export default async (request: Request) => {
-  return app.fetch(request);
+  // Create a new request with the path relative to /api/polymarket
+  const url = new URL(request.url);
+  const pathAfterApi = url.pathname.replace(/^\/api\/polymarket/, '') || '/';
+  const newUrl = new URL(pathAfterApi + url.search, url.origin);
+  const newRequest = new Request(newUrl.toString(), {
+    method: request.method,
+    headers: request.headers,
+    body: request.body,
+  });
+  
+  return app.fetch(newRequest);
 };
 
