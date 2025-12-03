@@ -8,9 +8,11 @@ export default defineConfig({
   server: {
     allowedHosts: true,
   },
+  publicDir: "public",
   build: {
     chunkSizeWarningLimit: 5000,
     outDir: "dist",
+    copyPublicDir: true,
   },
   resolve: {
     alias: {
