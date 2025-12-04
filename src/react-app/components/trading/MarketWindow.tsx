@@ -786,7 +786,7 @@ export default function MarketWindow({ market, isOpen, onClose }: MarketWindowPr
         onClick={onClose}
       >
         <div 
-          className={`bg-[#111111] border border-gray-800 rounded-lg w-full max-w-7xl h-[90vh] overflow-hidden flex flex-col shadow-2xl transition-all duration-[400ms] ease-in-out ${
+          className={`bg-[#0a0a0a] border border-gray-800 rounded-lg w-full max-w-7xl h-[90vh] overflow-hidden flex flex-col shadow-2xl transition-all duration-[400ms] ease-in-out ${
             isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
           }`}
           onClick={(e) => e.stopPropagation()}
@@ -985,7 +985,7 @@ export default function MarketWindow({ market, isOpen, onClose }: MarketWindowPr
               </Card>
 
               {/* Market Outcomes */}
-              <Card className="bg-[#111111] border border-gray-800 rounded-md" style={{ width: 'calc(100% + 330px)' }}>
+              <Card className="bg-[#0a0a0a] border border-gray-800 rounded-md" style={{ width: 'calc(100% + 330px)' }}>
                 {isYesNoMarket ? (
                   // Yes/No Market Display
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4 min-h-[300px]">
