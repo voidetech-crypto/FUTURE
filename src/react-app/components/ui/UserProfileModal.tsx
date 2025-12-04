@@ -114,6 +114,17 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username, initi
       return () => clearTimeout(timeoutId);
     }
   }, [isOpen, initialTimeframe]);
+  
+  // Also update timeframe if initialTimeframe changes while modal is open
+  useEffect(() => {
+    if (isOpen && initialTimeframe && pnlTimeframe !== initialTimeframe) {
+      console.log('[UserProfileModal] initialTimeframe changed while modal is open, updating:', {
+        from: pnlTimeframe,
+        to: initialTimeframe
+      });
+      setPnlTimeframe(initialTimeframe);
+    }
+  }, [initialTimeframe, isOpen, pnlTimeframe]);
 
   // Track previous user address to detect changes
   const prevUserAddressRef = useRef<string>("");
