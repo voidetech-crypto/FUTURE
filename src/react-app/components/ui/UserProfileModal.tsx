@@ -112,17 +112,28 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username, initi
     if (isOpen) {
       // Immediately mount when opening
       setIsMounted(true);
-      // Set the timeframe when modal opens - ALWAYS use initialTimeframe if provided
+      // Set the timeframe when modal opens
+      // Priority: initialTimeframe prop > last leaderboard timeframe > current state > default 1M
+      let timeframeToUse: "1D" | "1W" | "1M" | "ALL" = "1M";
+      
       if (initialTimeframe) {
-        console.log('[UserProfileModal] Opening modal - setting timeframe from prop:', {
-          initialTimeframe,
-          currentPnlTimeframe: pnlTimeframe,
-          willUpdate: pnlTimeframe !== initialTimeframe
-        });
-        setPnlTimeframe(initialTimeframe);
+        timeframeToUse = initialTimeframe;
+        console.log('[UserProfileModal] Opening modal - using initialTimeframe prop:', initialTimeframe);
       } else {
-        console.log('[UserProfileModal] Opening modal - no initialTimeframe prop, using default 1M');
+        const lastLeaderboardTimeframe = getLastLeaderboardTimeframeAsModal();
+        if (lastLeaderboardTimeframe) {
+          timeframeToUse = lastLeaderboardTimeframe;
+          console.log('[UserProfileModal] Opening modal - using last leaderboard timeframe:', lastLeaderboardTimeframe);
+        } else {
+          console.log('[UserProfileModal] Opening modal - no timeframe source, using default 1M');
+        }
       }
+      
+      if (pnlTimeframe !== timeframeToUse) {
+        console.log('[UserProfileModal] Updating timeframe:', { from: pnlTimeframe, to: timeframeToUse });
+        setPnlTimeframe(timeframeToUse);
+      }
+      
       // Trigger animation after mount
       const timeoutId = setTimeout(() => setIsVisible(true), 10);
       return () => clearTimeout(timeoutId);
@@ -134,7 +145,7 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username, initi
       }, 300);
       return () => clearTimeout(timeoutId);
     }
-  }, [isOpen, initialTimeframe]);
+  }, [isOpen, initialTimeframe, pnlTimeframe]);
   
   // Also update timeframe if initialTimeframe or last leaderboard timeframe changes while modal is open
   useEffect(() => {
