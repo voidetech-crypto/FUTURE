@@ -98,6 +98,10 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username, initi
     if (isOpen) {
       // Immediately mount when opening
       setIsMounted(true);
+      // Set the timeframe when modal opens
+      if (initialTimeframe) {
+        setPnlTimeframe(initialTimeframe);
+      }
       // Trigger animation after mount
       const timeoutId = setTimeout(() => setIsVisible(true), 10);
       return () => clearTimeout(timeoutId);
@@ -109,17 +113,10 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username, initi
       }, 300);
       return () => clearTimeout(timeoutId);
     }
-  }, [isOpen]);
+  }, [isOpen, initialTimeframe]);
 
   // Track previous user address to detect changes
   const prevUserAddressRef = useRef<string>("");
-  
-  // Update timeframe when initialTimeframe prop changes
-  useEffect(() => {
-    if (initialTimeframe && isOpen) {
-      setPnlTimeframe(initialTimeframe);
-    }
-  }, [initialTimeframe, isOpen]);
   
   // Clear data when modal closes
   useEffect(() => {
@@ -145,7 +142,6 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username, initi
       }
       setActiveTab("active");
       setSearchTerm("");
-      setPnlTimeframe(initialTimeframe || "1M");
       setIsVisible(false);
       // Reset the ref when modal closes
       prevUserAddressRef.current = "";
