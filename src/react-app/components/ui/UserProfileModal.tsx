@@ -289,8 +289,9 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username, initi
       
       results.forEach(({ timeframe, result }) => {
         if (result.success && result.profile) {
-          if (timeframe === "1M") {
-            // Use 1M as the base profile
+          // Use the current pnlTimeframe as the base profile, or 1M as fallback
+          if (timeframe === pnlTimeframe || (timeframe === "1M" && !baseProfile)) {
+            // Use current timeframe or 1M as the base profile
             baseProfile = result.profile;
           }
           const pnlHistory = result.profile.pnlHistory || [];
