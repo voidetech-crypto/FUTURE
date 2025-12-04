@@ -54,6 +54,8 @@ export default function Leaderboard() {
   };
 
   const sortedData = sortData(sortBy);
+  // Skip first 3 entries for the table (they're shown in the podium)
+  const tableData = sortedData.slice(3);
 
   if (loading) {
     return (
@@ -243,7 +245,7 @@ export default function Leaderboard() {
                 </tr>
               </thead>
               <tbody>
-                {sortedData.map((trader) => (
+                {tableData.map((trader) => (
                   <tr 
                     key={trader.address} 
                     className="border-b border-gray-800/50 hover:bg-gray-800/30 transition-colors cursor-pointer"
