@@ -308,10 +308,14 @@ export default function Leaderboard() {
           userAddress={selectedUser?.address || ""}
           username={selectedUser?.username || ""}
           initialTimeframe={
-            timeframe === "day" ? "1D" :
-            timeframe === "week" ? "1W" :
-            timeframe === "month" ? "1M" :
-            "ALL"
+            (() => {
+              const mapped = timeframe === "day" ? "1D" :
+                             timeframe === "week" ? "1W" :
+                             timeframe === "month" ? "1M" :
+                             "ALL";
+              console.log('[Leaderboard] Passing timeframe to modal:', { leaderboardTimeframe: timeframe, mappedTimeframe: mapped });
+              return mapped;
+            })()
           }
         />
       </div>
