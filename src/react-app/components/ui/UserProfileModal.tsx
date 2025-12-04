@@ -184,11 +184,12 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username, initi
   }, [isOpen, userAddress, isMounted, timeframesLoaded]);
 
   // Fetch base profile data (positions, etc.) - only once
+  // Include pnlTimeframe in dependencies so it refetches when timeframe changes
   useEffect(() => {
     if (isOpen && userAddress && isMounted) {
       fetchBaseProfile();
     }
-  }, [isOpen, userAddress, isMounted]);
+  }, [isOpen, userAddress, isMounted, pnlTimeframe]);
 
   const fetchBaseProfile = async () => {
     try {
