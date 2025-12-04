@@ -72,7 +72,11 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username, initi
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"active" | "closed" | "activity">("active");
-  const [pnlTimeframe, setPnlTimeframe] = useState<"1D" | "1W" | "1M" | "ALL">("1M");
+  // Initialize with initialTimeframe if provided, otherwise default to 1M
+  // Use a function to ensure we get the latest initialTimeframe value
+  const [pnlTimeframe, setPnlTimeframe] = useState<"1D" | "1W" | "1M" | "ALL">(() => {
+    return initialTimeframe || "1M";
+  });
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddressCopied, setShowAddressCopied] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -98,10 +102,17 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username, initi
     if (isOpen) {
       // Immediately mount when opening
       setIsMounted(true);
-      // Set the timeframe when modal opens - use initialTimeframe if provided, otherwise default to 1M
-      const timeframeToUse = initialTimeframe || "1M";
-      console.log('[UserProfileModal] Opening modal with timeframe:', timeframeToUse, 'initialTimeframe prop:', initialTimeframe);
-      setPnlTimeframe(timeframeToUse);
+      // Set the timeframe when modal opens - ALWAYS use initialTimeframe if provided
+      if (initialTimeframe) {
+        console.log('[UserProfileModal] Opening modal - setting timeframe from prop:', {
+          initialTimeframe,
+          currentPnlTimeframe: pnlTimeframe,
+          willUpdate: pnlTimeframe !== initialTimeframe
+        });
+        setPnlTimeframe(initialTimeframe);
+      } else {
+        console.log('[UserProfileModal] Opening modal - no initialTimeframe prop, using default 1M');
+      }
       // Trigger animation after mount
       const timeoutId = setTimeout(() => setIsVisible(true), 10);
       return () => clearTimeout(timeoutId);
