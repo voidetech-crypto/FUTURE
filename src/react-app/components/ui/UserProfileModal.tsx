@@ -195,14 +195,17 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username, initi
       console.log('[UserProfileModal] fetchBaseProfile called', {
         userAddress,
         isOpen,
-        isMounted
+        isMounted,
+        currentPnlTimeframe: pnlTimeframe
       });
       
       setLoading(true);
       setError(null);
       
-      // Fetch base profile with default timeframe (1M) for positions and other data
-      const response = await fetch(`/api/polymarket/user/${userAddress}/profile?timeframe=1M`);
+      // Fetch base profile with current timeframe for positions and other data
+      // Use the current pnlTimeframe instead of hardcoded 1M
+      const timeframeParam = pnlTimeframe === "ALL" ? "ALL" : pnlTimeframe;
+      const response = await fetch(`/api/polymarket/user/${userAddress}/profile?timeframe=${timeframeParam}`);
       const result = await response.json();
       
       console.log('[UserProfileModal] Base profile fetch response', {
