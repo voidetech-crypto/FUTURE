@@ -217,9 +217,11 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username, initi
       if (result.success) {
         // Set base profile data (without PNL history, that comes from allTimeframeData)
         const { pnlHistory, ...baseProfile } = result.profile;
+        // Use the current timeframe's data instead of hardcoded "1M"
+        const timeframeKey = pnlTimeframe === "ALL" ? "ALL" : pnlTimeframe;
         setProfileData({
           ...baseProfile,
-          pnlHistory: allTimeframeData["1M"] || []
+          pnlHistory: allTimeframeData[timeframeKey] || []
         } as UserProfileData);
       } else {
         console.error('[UserProfileModal] Base profile fetch failed', result.error);
