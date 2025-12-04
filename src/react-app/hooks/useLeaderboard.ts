@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { setLastLeaderboardTimeframe } from "@/react-app/store/lastLeaderboardTimeframe";
 
 export interface LeaderboardEntry {
   rank: number;
@@ -37,6 +38,9 @@ export function useLeaderboard(timeframe: LeaderboardTimeframe = "all", limit: n
     try {
       setLoading(true);
       setError(null);
+      
+      // Track the last leaderboard API call timeframe
+      setLastLeaderboardTimeframe(timeframe);
       
       const url = `/api/polymarket/leaderboard?timeframe=${timeframe}&limit=${limit}`;
       console.log(`[useLeaderboard] Fetching leaderboard for timeframe: ${timeframe}`, url);

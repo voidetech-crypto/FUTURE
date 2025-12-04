@@ -4,6 +4,7 @@ import { Card } from "@/react-app/components/ui/Card";
 import { X, Search, Filter, TrendingUp, TrendingDown, Calendar, Star, Copy, Download, Upload } from "lucide-react";
 import { PnlCardGenerator } from "@/react-app/components/ui/PnlCardGenerator";
 import MarketWindow from "@/react-app/components/trading/MarketWindow";
+import { getLastLeaderboardTimeframeAsModal } from "@/react-app/store/lastLeaderboardTimeframe";
 
 interface UserPosition {
   marketId: string;
@@ -72,10 +73,19 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username, initi
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"active" | "closed" | "activity">("active");
-  // Initialize with initialTimeframe if provided, otherwise default to 1M
-  // Use a function to ensure we get the latest initialTimeframe value
+  // Initialize with initialTimeframe if provided, otherwise use last leaderboard timeframe, otherwise default to 1M
+  // Use a function to ensure we get the latest values
   const [pnlTimeframe, setPnlTimeframe] = useState<"1D" | "1W" | "1M" | "ALL">(() => {
-    return initialTimeframe || "1M";
+    // Priority: initialTimeframe prop > last leaderboard timeframe > default 1M
+    if (initialTimeframe) {
+      return initialTimeframe;
+    }
+    const lastLeaderboardTimeframe = getLastLeaderboardTimeframeAsModal();
+    if (lastLeaderboardTimeframe) {
+      console.log('[UserProfileModal] Using last leaderboard timeframe:', lastLeaderboardTimeframe);
+      return lastLeaderboardTimeframe;
+    }
+    return "1M";
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddressCopied, setShowAddressCopied] = useState(false);
@@ -126,14 +136,25 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username, initi
     }
   }, [isOpen, initialTimeframe]);
   
-  // Also update timeframe if initialTimeframe changes while modal is open
+  // Also update timeframe if initialTimeframe or last leaderboard timeframe changes while modal is open
   useEffect(() => {
-    if (isOpen && initialTimeframe && pnlTimeframe !== initialTimeframe) {
-      console.log('[UserProfileModal] initialTimeframe changed while modal is open, updating:', {
-        from: pnlTimeframe,
-        to: initialTimeframe
-      });
-      setPnlTimeframe(initialTimeframe);
+    if (isOpen) {
+      let timeframeToUse: "1D" | "1W" | "1M" | "ALL" | null = null;
+      
+      if (initialTimeframe) {
+        timeframeToUse = initialTimeframe;
+      } else {
+        timeframeToUse = getLastLeaderboardTimeframeAsModal();
+      }
+      
+      if (timeframeToUse && pnlTimeframe !== timeframeToUse) {
+        console.log('[UserProfileModal] Timeframe source changed while modal is open, updating:', {
+          from: pnlTimeframe,
+          to: timeframeToUse,
+          source: initialTimeframe ? 'prop' : 'lastLeaderboard'
+        });
+        setPnlTimeframe(timeframeToUse);
+      }
     }
   }, [initialTimeframe, isOpen, pnlTimeframe]);
 
