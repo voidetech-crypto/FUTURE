@@ -307,6 +307,12 @@ export default function Leaderboard() {
           onClose={() => setSelectedUser(null)}
           userAddress={selectedUser?.address || ""}
           username={selectedUser?.username || ""}
+          initialTimeframe={
+            timeframe === "day" ? "1D" :
+            timeframe === "week" ? "1W" :
+            timeframe === "month" ? "1M" :
+            "ALL"
+          }
         />
       </div>
     </div>

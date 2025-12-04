@@ -64,14 +64,15 @@ interface UserProfileModalProps {
   onClose: () => void;
   userAddress: string;
   username: string;
+  initialTimeframe?: "1D" | "1W" | "1M" | "ALL";
 }
 
-export function UserProfileModal({ isOpen, onClose, userAddress, username }: UserProfileModalProps) {
+export function UserProfileModal({ isOpen, onClose, userAddress, username, initialTimeframe }: UserProfileModalProps) {
   const [profileData, setProfileData] = useState<UserProfileData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"active" | "closed" | "activity">("active");
-  const [pnlTimeframe, setPnlTimeframe] = useState<"1D" | "1W" | "1M" | "ALL">("1M");
+  const [pnlTimeframe, setPnlTimeframe] = useState<"1D" | "1W" | "1M" | "ALL">(initialTimeframe || "1M");
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddressCopied, setShowAddressCopied] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
@@ -113,6 +114,13 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username }: Use
   // Track previous user address to detect changes
   const prevUserAddressRef = useRef<string>("");
   
+  // Update timeframe when initialTimeframe prop changes
+  useEffect(() => {
+    if (initialTimeframe && isOpen) {
+      setPnlTimeframe(initialTimeframe);
+    }
+  }, [initialTimeframe, isOpen]);
+  
   // Clear data when modal closes
   useEffect(() => {
     if (!isOpen) {
@@ -137,12 +145,12 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username }: Use
       }
       setActiveTab("active");
       setSearchTerm("");
-      setPnlTimeframe("1M");
+      setPnlTimeframe(initialTimeframe || "1M");
       setIsVisible(false);
       // Reset the ref when modal closes
       prevUserAddressRef.current = "";
     }
-  }, [isOpen]);
+  }, [isOpen, initialTimeframe]);
 
   // Clear data when userAddress changes (new user selected while modal is open)
   useEffect(() => {
