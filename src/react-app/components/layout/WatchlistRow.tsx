@@ -414,8 +414,8 @@ export default function WatchlistRow() {
                   {shortOutcomeName && (
                     <span className="text-xs text-gray-400 whitespace-nowrap">{shortOutcomeName}</span>
                   )}
-                  <span className="text-xs text-green-800 whitespace-nowrap">{formatYesPrice(topPrice)}</span>
-                  <span className="text-xs text-red-800 whitespace-nowrap">{formatNoPrice(topNoPrice)}</span>
+                  <span className="text-xs text-green-600 whitespace-nowrap">{formatYesPrice(topPrice)}</span>
+                  <span className="text-xs text-red-600 whitespace-nowrap">{formatNoPrice(topNoPrice)}</span>
                   {activeFilter === "watchlist" && (
                     <button
                       onClick={(e) => {
