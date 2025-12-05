@@ -1217,7 +1217,7 @@ export default function MarketWindow({ market, isOpen, onClose }: MarketWindowPr
                   </div>
                 ) : (
                   // Fallback - Show Yes/No if we can't determine
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 min-h-[300px]">
+                  <div className="grid grid-cols-1 gap-4 min-h-[300px]">
                     <div className="p-4 bg-green-900/20 border border-green-800 rounded-lg">
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-medium" style={{ color: '#14532d' }}>Yes</span>
