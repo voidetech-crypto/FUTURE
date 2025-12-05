@@ -5,7 +5,8 @@
 type LeaderboardTimeframe = "day" | "week" | "month" | "all";
 type ModalTimeframe = "1D" | "1W" | "1M" | "ALL";
 
-let lastLeaderboardTimeframe: LeaderboardTimeframe | null = null;
+// Initialize with "day" (24h) as default since Leaderboard page defaults to "day"
+let lastLeaderboardTimeframe: LeaderboardTimeframe | null = "day";
 
 export function setLastLeaderboardTimeframe(timeframe: LeaderboardTimeframe) {
   lastLeaderboardTimeframe = timeframe;

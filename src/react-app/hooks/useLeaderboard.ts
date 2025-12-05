@@ -39,8 +39,10 @@ export function useLeaderboard(timeframe: LeaderboardTimeframe = "all", limit: n
       setLoading(true);
       setError(null);
       
-      // Track the last leaderboard API call timeframe
+      // Track the last leaderboard API call timeframe BEFORE making the request
+      // This ensures it's set even if the request fails
       setLastLeaderboardTimeframe(timeframe);
+      console.log(`[useLeaderboard] Tracking last leaderboard timeframe: ${timeframe}`);
       
       const url = `/api/polymarket/leaderboard?timeframe=${timeframe}&limit=${limit}`;
       console.log(`[useLeaderboard] Fetching leaderboard for timeframe: ${timeframe}`, url);

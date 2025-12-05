@@ -73,10 +73,10 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username, initi
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"active" | "closed" | "activity">("active");
-  // Initialize with initialTimeframe if provided, otherwise use last leaderboard timeframe, otherwise default to 1M
+  // Initialize with initialTimeframe if provided, otherwise use last leaderboard timeframe, otherwise default to 1D (24h)
   // Use a function to ensure we get the latest values
   const [pnlTimeframe, setPnlTimeframe] = useState<"1D" | "1W" | "1M" | "ALL">(() => {
-    // Priority: initialTimeframe prop > last leaderboard timeframe > default 1M
+    // Priority: initialTimeframe prop > last leaderboard timeframe > default 1D (24h)
     if (initialTimeframe) {
       return initialTimeframe;
     }
@@ -85,7 +85,9 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username, initi
       console.log('[UserProfileModal] Using last leaderboard timeframe:', lastLeaderboardTimeframe);
       return lastLeaderboardTimeframe;
     }
-    return "1M";
+    // Default to 24h (1D) instead of 1M
+    console.log('[UserProfileModal] No timeframe source, defaulting to 1D (24h)');
+    return "1D";
   });
   const [searchTerm, setSearchTerm] = useState("");
   const [showAddressCopied, setShowAddressCopied] = useState(false);
@@ -113,8 +115,8 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username, initi
       // Immediately mount when opening
       setIsMounted(true);
       // Set the timeframe when modal opens
-      // Priority: initialTimeframe prop > last leaderboard timeframe > current state > default 1M
-      let timeframeToUse: "1D" | "1W" | "1M" | "ALL" = "1M";
+      // Priority: initialTimeframe prop > last leaderboard timeframe > current state > default 1D (24h)
+      let timeframeToUse: "1D" | "1W" | "1M" | "ALL" = "1D";
       
       if (initialTimeframe) {
         timeframeToUse = initialTimeframe;
@@ -125,7 +127,7 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username, initi
           timeframeToUse = lastLeaderboardTimeframe;
           console.log('[UserProfileModal] Opening modal - using last leaderboard timeframe:', lastLeaderboardTimeframe);
         } else {
-          console.log('[UserProfileModal] Opening modal - no timeframe source, using default 1M');
+          console.log('[UserProfileModal] Opening modal - no timeframe source, using default 1D (24h)');
         }
       }
       
