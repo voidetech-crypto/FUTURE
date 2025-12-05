@@ -35,7 +35,7 @@ const MarketRow = memo(({ market, index, navigate, onMarketClick, showWatchlist,
   };
 
   return (
-    <div className={`p-2 cursor-pointer transition-colors group hover:bg-gray-800/50 ${!isLast ? 'border-b border-gray-800' : ''} ${index % 2 === 0 ? 'xl:border-r xl:border-gray-800' : ''}`} onClick={handleClick}>
+    <div className={`p-2 cursor-pointer transition-colors group hover:bg-gray-800/50 ${!isLast ? 'border-b border-gray-800' : ''} ${index % 2 === 0 ? 'border-r border-gray-800' : ''}`} onClick={handleClick}>
       <div className="flex items-center gap-2 justify-between">
         {/* Image box */}
         <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center overflow-hidden rounded-md">
@@ -627,7 +627,7 @@ export default function MarketOverview({ showAllMarkets = false, defaultLimit = 
       <div className="flex-1 min-h-0 flex flex-col">
           <div className="flex-1 min-h-0 overflow-y-auto scrollable-content">
             <Card className="bg-gray-900 border border-gray-800 rounded-md overflow-hidden">
-              <div className="grid grid-cols-1 xl:grid-cols-2">
+              <div className="grid grid-cols-2">
             {marketsLoading ? (
               <>
                 {[...Array(80)].map((_, index) => (
@@ -707,9 +707,11 @@ export default function MarketOverview({ showAllMarkets = false, defaultLimit = 
                 } catch (error) {
                   console.error(`Error rendering market ${market.id || index}:`, error);
                   const totalItems = filteredMarkets.length;
-                  const isLast = index === totalItems - 1;
+                  const rowIndex = Math.floor(index / 2);
+                  const totalRows = Math.ceil(totalItems / 2);
+                  const isInLastRow = rowIndex === totalRows - 1;
                   return (
-                    <div key={market.id || `market-${index}`} className={`p-2 bg-red-900/20 ${!isLast ? 'border-b border-red-800' : ''}`}>
+                    <div key={market.id || `market-${index}`} className={`p-2 bg-red-900/20 ${!isInLastRow ? 'border-b border-red-800' : ''}`}>
                       <div className="text-xs text-red-400">Error rendering market: {market.title || market.id}</div>
                     </div>
                   );

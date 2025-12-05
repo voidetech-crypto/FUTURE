@@ -915,7 +915,7 @@ export default function MarketWindow({ market, isOpen, onClose }: MarketWindowPr
         <div className="flex-1 overflow-y-auto pl-4 pr-4 pt-1 pb-6 market-window-scrollbar">
           <div className="flex flex-col lg:flex-row gap-3 items-start">
             {/* Main Content - Left Side */}
-            <div className="space-y-3 flex-1 flex flex-col w-full lg:w-auto" style={{ maxWidth: '100%' }}>
+            <div className="space-y-3 flex-1 flex flex-col" style={{ maxWidth: 'calc(100% - 320px - 0.75rem)' }}>
               {/* Chart Section */}
               <Card className="p-4 bg-gray-900 border-gray-800 rounded-md">
                 <div className="flex items-center justify-between -mt-2 mb-1 -ml-3">
@@ -985,10 +985,10 @@ export default function MarketWindow({ market, isOpen, onClose }: MarketWindowPr
               </Card>
 
               {/* Market Outcomes */}
-              <Card className="bg-[#0a0a0a] border border-gray-800 rounded-md w-full lg:w-auto" style={{ width: '100%' }}>
+              <Card className="bg-[#0a0a0a] border border-gray-800 rounded-md" style={{ width: 'calc(100% + 330px)' }}>
                 {isYesNoMarket ? (
                   // Yes/No Market Display
-                  <div className="grid grid-cols-1 gap-4 min-h-[300px]">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 min-h-[300px]">
                     <div 
                       className="p-4 bg-green-900/20 border border-green-800 rounded-lg cursor-pointer hover:bg-green-900/30 transition-colors"
                       onClick={() => {
@@ -1217,7 +1217,7 @@ export default function MarketWindow({ market, isOpen, onClose }: MarketWindowPr
                   </div>
                 ) : (
                   // Fallback - Show Yes/No if we can't determine
-                  <div className="grid grid-cols-1 gap-4 min-h-[300px]">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 min-h-[300px]">
                     <div className="p-4 bg-green-900/20 border border-green-800 rounded-lg">
                       <div className="flex items-center justify-between mb-2">
                         <span className="font-medium" style={{ color: '#14532d' }}>Yes</span>
@@ -1252,7 +1252,7 @@ export default function MarketWindow({ market, isOpen, onClose }: MarketWindowPr
             </div>
 
             {/* Trading Sidebar - Right Side */}
-            <div className="space-y-3 w-full lg:w-[320px] flex-shrink-0">
+            <div className="space-y-3" style={{ width: '320px', flexShrink: 0 }}>
               <Card className="p-4 bg-gray-900 border-gray-800 rounded-md">
                 {/* Outcome Name Display and Buy/Sell Selector */}
                 <div className="flex items-center justify-between -mt-2 mb-2">
