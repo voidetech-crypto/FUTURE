@@ -805,7 +805,10 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username, initi
                           return (
                             <button
                               key={period}
-                              onClick={() => setPnlTimeframe(periodMap[period])}
+                              onClick={() => {
+                                userChangedTimeframeRef.current = true;
+                                setPnlTimeframe(periodMap[period]);
+                              }}
                               className={`px-1 py-1 text-xs transition-colors ${
                                 pnlTimeframe === periodMap[period]
                                   ? "text-white"
