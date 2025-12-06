@@ -1613,7 +1613,7 @@ export default function MarketWindow({ market, isOpen, onClose }: MarketWindowPr
           </div>
 
     {/* Copy Notification Toast */}
-    <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-[101] transition-all duration-300 ${showNotification ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'}`}>
+    <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-[151] transition-all duration-300 ${showNotification ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'}`}>
       <div className="bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 shadow-lg flex items-center gap-2">
         <Copy className="w-4 h-4 text-green-400" />
         <span className="text-sm text-white">Event id copied to clipboard</span>
