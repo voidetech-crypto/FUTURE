@@ -78,7 +78,7 @@ const MarketRow = memo(({ market, index, navigate, onMarketClick, showWatchlist,
           </div>
           <div className="flex items-center gap-1 text-sm text-gray-400">
             <span>{typeof market.category === 'string' ? market.category : (market.category?.name || market.category?.label || 'Other')}</span>
-            {market.endDate && viewportWidth > 1200 && (() => {
+            {market.endDate && viewportWidth > 1500 && (() => {
               try {
                 const endDate = new Date(market.endDate);
                 if (!isNaN(endDate.getTime())) {
@@ -95,7 +95,7 @@ const MarketRow = memo(({ market, index, navigate, onMarketClick, showWatchlist,
               return null;
             })()}
             <span>• {market.volume}</span>
-            {market.volume24hr && market.volume24hr !== "$0" && (market.volume24hrNum || 0) > 0 && viewportWidth > 900 && (
+            {market.volume24hr && market.volume24hr !== "$0" && (market.volume24hrNum || 0) > 0 && viewportWidth > 1600 && (
               <span>• {market.volume24hr}</span>
             )}
           </div>
