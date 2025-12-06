@@ -1037,15 +1037,47 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username, initi
                                   <tr 
                                     key={position.marketId || index} 
                                     className="border-b border-gray-800/50 hover:bg-gray-900/50 transition-colors cursor-pointer"
-                                    onClick={() => {
+                                    onClick={async () => {
                                       // Create market object from position data
-                                      // Use conditionId if marketId looks like a hex string, otherwise use as id
+                                      // If marketId is a hex string (condition ID), we need to fetch the question ID first
                                       const isHexId = position.marketId?.startsWith('0x');
-                                      setSelectedMarket({
-                                        ...(isHexId ? { conditionId: position.marketId } : { id: position.marketId }),
-                                        title: position.marketTitle,
-                                        image: position.image
-                                      });
+                                      
+                                      if (isHexId) {
+                                        // Try to fetch market by condition ID to get question ID
+                                        try {
+                                          const response = await fetch(`/api/polymarket/markets/${position.marketId}`);
+                                          const result = await response.json();
+                                          if (result.success && result.market) {
+                                            // Use the question ID from the fetched market
+                                            setSelectedMarket({
+                                              id: result.market.id || result.market.questionID || position.marketId,
+                                              title: result.market.title || position.marketTitle,
+                                              image: result.market.image || position.image
+                                            });
+                                          } else {
+                                            // Fallback: use conditionId and let MarketWindow handle it
+                                            setSelectedMarket({
+                                              conditionId: position.marketId,
+                                              title: position.marketTitle,
+                                              image: position.image
+                                            });
+                                          }
+                                        } catch (err) {
+                                          // Fallback: use conditionId and let MarketWindow handle it
+                                          setSelectedMarket({
+                                            conditionId: position.marketId,
+                                            title: position.marketTitle,
+                                            image: position.image
+                                          });
+                                        }
+                                      } else {
+                                        // Numeric ID - use directly
+                                        setSelectedMarket({
+                                          id: position.marketId,
+                                          title: position.marketTitle,
+                                          image: position.image
+                                        });
+                                      }
                                     }}
                                   >
                                     <td className="py-3 px-4">
@@ -1152,15 +1184,44 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username, initi
                             <tr 
                               key={activity.id} 
                               className="border-b border-gray-800/50 hover:bg-gray-900/50 transition-colors cursor-pointer"
-                              onClick={() => {
+                              onClick={async () => {
                                 // Create market object from activity data
                                 if (activity.marketId) {
-                                  // Use conditionId if marketId looks like a hex string, otherwise use as id
+                                  // If marketId is a hex string (condition ID), we need to fetch the question ID first
                                   const isHexId = activity.marketId.startsWith('0x');
-                                  setSelectedMarket({
-                                    ...(isHexId ? { conditionId: activity.marketId } : { id: activity.marketId }),
-                                    title: activity.marketTitle
-                                  });
+                                  
+                                  if (isHexId) {
+                                    // Try to fetch market by condition ID to get question ID
+                                    try {
+                                      const response = await fetch(`/api/polymarket/markets/${activity.marketId}`);
+                                      const result = await response.json();
+                                      if (result.success && result.market) {
+                                        // Use the question ID from the fetched market
+                                        setSelectedMarket({
+                                          id: result.market.id || result.market.questionID || activity.marketId,
+                                          title: result.market.title || activity.marketTitle
+                                        });
+                                      } else {
+                                        // Fallback: use conditionId and let MarketWindow handle it
+                                        setSelectedMarket({
+                                          conditionId: activity.marketId,
+                                          title: activity.marketTitle
+                                        });
+                                      }
+                                    } catch (err) {
+                                      // Fallback: use conditionId and let MarketWindow handle it
+                                      setSelectedMarket({
+                                        conditionId: activity.marketId,
+                                        title: activity.marketTitle
+                                      });
+                                    }
+                                  } else {
+                                    // Numeric ID - use directly
+                                    setSelectedMarket({
+                                      id: activity.marketId,
+                                      title: activity.marketTitle
+                                    });
+                                  }
                                 }
                               }}
                             >
