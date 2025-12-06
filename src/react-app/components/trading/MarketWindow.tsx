@@ -780,7 +780,7 @@ export default function MarketWindow({ market, isOpen, onClose }: MarketWindowPr
         }
       `}</style>
       <div 
-        className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4 overflow-y-auto market-window-scrollbar transition-opacity duration-[400ms] ease-in-out ${
+        className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-[150] flex items-center justify-center p-4 overflow-y-auto market-window-scrollbar transition-opacity duration-[400ms] ease-in-out ${
           isVisible ? 'opacity-100' : 'opacity-0'
         } ${!isVisible ? 'pointer-events-none' : ''}`}
         onClick={onClose}
