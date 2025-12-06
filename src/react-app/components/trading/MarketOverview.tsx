@@ -6,7 +6,7 @@ import { usePolymarketSubgraphMarkets } from "@/react-app/hooks/usePolymarketSub
 import { formatYesPrice, formatNoPrice } from "@/react-app/utils/priceFormat";
 import { Card } from "@/react-app/components/ui/Card";
 // Memoized market row to prevent unnecessary re-renders
-const MarketRow = memo(({ market, index, navigate, onMarketClick, showWatchlist, isWatched, onWatchlistToggle, onCopy, isLast }: { market: any; index: number; navigate: (path: string) => void; onMarketClick?: (market: any) => void; showWatchlist?: boolean; isWatched?: boolean; onWatchlistToggle?: (marketId: string) => void; onCopy?: () => void; isLast?: boolean }) => {
+const MarketRow = memo(({ market, index, navigate, onMarketClick, showWatchlist, isWatched, onWatchlistToggle, onCopy, isLast, isWalletPanelOpen }: { market: any; index: number; navigate: (path: string) => void; onMarketClick?: (market: any) => void; showWatchlist?: boolean; isWatched?: boolean; onWatchlistToggle?: (marketId: string) => void; onCopy?: () => void; isLast?: boolean; isWalletPanelOpen?: boolean }) => {
   const [copied, setCopied] = useState(false);
   
   // Safety check
@@ -96,7 +96,7 @@ const MarketRow = memo(({ market, index, navigate, onMarketClick, showWatchlist,
             })()}
             <span>• {market.volume}</span>
             {market.volume24hr && market.volume24hr !== "$0" && (market.volume24hrNum || 0) > 0 && (
-              <span>• {market.volume24hr}</span>
+              <span className={isWalletPanelOpen ? "hidden xl:inline" : ""}>• {market.volume24hr}</span>
             )}
           </div>
         </div>
@@ -202,9 +202,10 @@ interface MarketOverviewProps {
   defaultLimit?: number;
   useSubgraph?: boolean;
   onMarketClick?: (market: any) => void;
+  isWalletPanelOpen?: boolean;
 }
 
-export default function MarketOverview({ showAllMarkets = false, defaultLimit = 50, useSubgraph = false, onMarketClick }: MarketOverviewProps) {
+export default function MarketOverview({ showAllMarkets = false, defaultLimit = 50, useSubgraph = false, onMarketClick, isWalletPanelOpen = false }: MarketOverviewProps) {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
@@ -702,6 +703,7 @@ export default function MarketOverview({ showAllMarkets = false, defaultLimit = 
                       onWatchlistToggle={handleWatchlistToggle}
                       onCopy={handleCopyNotification}
                       isLast={isLast}
+                      isWalletPanelOpen={isWalletPanelOpen}
                     />
                   );
                 } catch (error) {

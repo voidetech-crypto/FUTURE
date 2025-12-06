@@ -2,7 +2,11 @@ import { useState } from "react";
 import MarketOverview from "@/react-app/components/trading/MarketOverview";
 import MarketWindow from "@/react-app/components/trading/MarketWindow";
 
-export default function Home() {
+interface HomeProps {
+  isWalletPanelOpen?: boolean;
+}
+
+export default function Home({ isWalletPanelOpen = false }: HomeProps) {
   const [selectedMarket, setSelectedMarket] = useState<any>(null);
 
   const handleMarketClick = (market: any) => {
@@ -22,6 +26,7 @@ export default function Home() {
             defaultLimit={100} 
             useSubgraph={true} 
             onMarketClick={handleMarketClick}
+            isWalletPanelOpen={isWalletPanelOpen}
           />
         </div>
       </div>

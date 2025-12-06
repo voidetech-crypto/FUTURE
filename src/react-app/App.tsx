@@ -24,7 +24,7 @@ export default function App() {
         <div className="flex-1 overflow-hidden flex">
           <main className="flex-1 overflow-hidden transition-all duration-300">
             <Routes>
-              <Route path="/" element={<Home />} />
+              <Route path="/" element={<Home isWalletPanelOpen={isWalletPanelOpen} />} />
               <Route path="/leaderboard" element={<Leaderboard />} />
               <Route path="/market/:id" element={<Market />} />
               <Route path="/alerts" element={<Alerts />} />
