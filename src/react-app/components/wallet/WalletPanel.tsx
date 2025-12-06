@@ -30,7 +30,7 @@ export default function WalletPanel({ isOpen, onClose }: WalletPanelProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="w-[400px] bg-[#0a0a0a] border-l border-gray-800 flex flex-col flex-shrink-0">
+    <div className="w-[320px] bg-[#0a0a0a] border-l border-gray-800 flex flex-col flex-shrink-0">
       {/* Top Navigation Bar */}
       <div className="flex items-center justify-between px-4 py-2 border-b border-gray-800 bg-[#0a0a0a]">
         {/* Left: Tabs */}
