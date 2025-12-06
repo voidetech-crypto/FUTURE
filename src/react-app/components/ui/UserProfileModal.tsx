@@ -1039,31 +1039,63 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username, initi
                                     className="border-b border-gray-800/50 hover:bg-gray-900/50 transition-colors cursor-pointer"
                                     onClick={async () => {
                                       // Create market object from position data
-                                      // If marketId is a hex string (condition ID), we need to fetch the question ID first
+                                      // If marketId is a hex string (condition ID), we need to get the question ID from subgraph
                                       const isHexId = position.marketId?.startsWith('0x');
                                       
                                       if (isHexId) {
-                                        // Try to fetch market by condition ID to get question ID
+                                        // Query subgraph to get question ID from condition ID
                                         try {
-                                          const response = await fetch(`/api/polymarket/markets/${position.marketId}`);
+                                          const ORDERS_SUBGRAPH = "https://api.goldsky.com/api/public/project_cl6mb8i9h0003e201j6li0diw/subgraphs/orderbook-subgraph/0.0.1/gn";
+                                          const query = `
+                                            query GetQuestionId($conditionId: String!) {
+                                              markets(where: { conditionId: $conditionId }, first: 1) {
+                                                conditionId
+                                                questionId
+                                              }
+                                            }
+                                          `;
+                                          
+                                          const response = await fetch(ORDERS_SUBGRAPH, {
+                                            method: 'POST',
+                                            headers: { 'Content-Type': 'application/json' },
+                                            body: JSON.stringify({
+                                              query,
+                                              variables: { conditionId: position.marketId }
+                                            })
+                                          });
+                                          
                                           const result = await response.json();
-                                          if (result.success && result.market) {
-                                            // Use the question ID from the fetched market
+                                          const questionId = result?.data?.markets?.[0]?.questionId;
+                                          
+                                          if (questionId) {
+                                            // Use the question ID from subgraph
                                             setSelectedMarket({
-                                              id: result.market.id || result.market.questionID || position.marketId,
-                                              title: result.market.title || position.marketTitle,
-                                              image: result.market.image || position.image
-                                            });
-                                          } else {
-                                            // Fallback: use conditionId and let MarketWindow handle it
-                                            setSelectedMarket({
-                                              conditionId: position.marketId,
+                                              id: questionId,
                                               title: position.marketTitle,
                                               image: position.image
                                             });
+                                          } else {
+                                            // Fallback: try fetching by condition ID
+                                            const marketResponse = await fetch(`/api/polymarket/markets/${position.marketId}`);
+                                            const marketResult = await marketResponse.json();
+                                            if (marketResult.success && marketResult.market) {
+                                              setSelectedMarket({
+                                                id: marketResult.market.id || marketResult.market.questionID || position.marketId,
+                                                title: marketResult.market.title || position.marketTitle,
+                                                image: marketResult.market.image || position.image
+                                              });
+                                            } else {
+                                              // Last fallback: use conditionId
+                                              setSelectedMarket({
+                                                conditionId: position.marketId,
+                                                title: position.marketTitle,
+                                                image: position.image
+                                              });
+                                            }
                                           }
                                         } catch (err) {
-                                          // Fallback: use conditionId and let MarketWindow handle it
+                                          console.error('Failed to get question ID from condition ID:', err);
+                                          // Fallback: use conditionId
                                           setSelectedMarket({
                                             conditionId: position.marketId,
                                             title: position.marketTitle,
@@ -1187,29 +1219,60 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username, initi
                               onClick={async () => {
                                 // Create market object from activity data
                                 if (activity.marketId) {
-                                  // If marketId is a hex string (condition ID), we need to fetch the question ID first
+                                  // If marketId is a hex string (condition ID), we need to get the question ID from subgraph
                                   const isHexId = activity.marketId.startsWith('0x');
                                   
                                   if (isHexId) {
-                                    // Try to fetch market by condition ID to get question ID
+                                    // Query subgraph to get question ID from condition ID
                                     try {
-                                      const response = await fetch(`/api/polymarket/markets/${activity.marketId}`);
+                                      const ORDERS_SUBGRAPH = "https://api.goldsky.com/api/public/project_cl6mb8i9h0003e201j6li0diw/subgraphs/orderbook-subgraph/0.0.1/gn";
+                                      const query = `
+                                        query GetQuestionId($conditionId: String!) {
+                                          markets(where: { conditionId: $conditionId }, first: 1) {
+                                            conditionId
+                                            questionId
+                                          }
+                                        }
+                                      `;
+                                      
+                                      const response = await fetch(ORDERS_SUBGRAPH, {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({
+                                          query,
+                                          variables: { conditionId: activity.marketId }
+                                        })
+                                      });
+                                      
                                       const result = await response.json();
-                                      if (result.success && result.market) {
-                                        // Use the question ID from the fetched market
+                                      const questionId = result?.data?.markets?.[0]?.questionId;
+                                      
+                                      if (questionId) {
+                                        // Use the question ID from subgraph
                                         setSelectedMarket({
-                                          id: result.market.id || result.market.questionID || activity.marketId,
-                                          title: result.market.title || activity.marketTitle
-                                        });
-                                      } else {
-                                        // Fallback: use conditionId and let MarketWindow handle it
-                                        setSelectedMarket({
-                                          conditionId: activity.marketId,
+                                          id: questionId,
                                           title: activity.marketTitle
                                         });
+                                      } else {
+                                        // Fallback: try fetching by condition ID
+                                        const marketResponse = await fetch(`/api/polymarket/markets/${activity.marketId}`);
+                                        const marketResult = await marketResponse.json();
+                                        if (marketResult.success && marketResult.market) {
+                                          setSelectedMarket({
+                                            id: marketResult.market.id || marketResult.market.questionID || activity.marketId,
+                                            title: marketResult.market.title || activity.marketTitle
+                                          });
+                                        } else {
+                                          // Last fallback: use conditionId
+                                          setSelectedMarket({
+                                            conditionId: activity.marketId,
+                                            title: activity.marketTitle
+                                          });
+                                        }
                                       }
                                     } catch (err) {
-                                      // Fallback: use conditionId and let MarketWindow handle it
+                                      console.error('Failed to get question ID from condition ID:', err);
+                                      // Fallback: use conditionId
                                       setSelectedMarket({
                                         conditionId: activity.marketId,
                                         title: activity.marketTitle
