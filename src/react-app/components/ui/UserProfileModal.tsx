@@ -108,12 +108,15 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username, initi
   const [leaderboardPnl, setLeaderboardPnl] = useState<number | null>(null);
   const [isPnlCardGeneratorOpen, setIsPnlCardGeneratorOpen] = useState(false);
   const [selectedMarket, setSelectedMarket] = useState<any>(null);
+  const userChangedTimeframeRef = useRef<boolean>(false);
 
   // Handle smooth open/close animation
   useEffect(() => {
     if (isOpen) {
       // Immediately mount when opening
       setIsMounted(true);
+      // Reset the user changed flag when modal opens
+      userChangedTimeframeRef.current = false;
       // Set the timeframe when modal opens
       // Priority: initialTimeframe prop > last leaderboard timeframe > current state > default 1D (24h)
       let timeframeToUse: "1D" | "1W" | "1M" | "ALL" = "1D";
@@ -131,10 +134,7 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username, initi
         }
       }
       
-      if (pnlTimeframe !== timeframeToUse) {
-        console.log('[UserProfileModal] Updating timeframe:', { from: pnlTimeframe, to: timeframeToUse });
-        setPnlTimeframe(timeframeToUse);
-      }
+      setPnlTimeframe(timeframeToUse);
       
       // Trigger animation after mount
       const timeoutId = setTimeout(() => setIsVisible(true), 10);
@@ -144,14 +144,17 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username, initi
       // Unmount after animation completes
       const timeoutId = setTimeout(() => {
         setIsMounted(false);
+        // Reset the flag when modal closes
+        userChangedTimeframeRef.current = false;
       }, 300);
       return () => clearTimeout(timeoutId);
     }
-  }, [isOpen, initialTimeframe, pnlTimeframe]);
+  }, [isOpen, initialTimeframe]);
   
   // Also update timeframe if initialTimeframe or last leaderboard timeframe changes while modal is open
+  // BUT only if the user hasn't manually changed it
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen && !userChangedTimeframeRef.current) {
       let timeframeToUse: "1D" | "1W" | "1M" | "ALL" | null = null;
       
       if (initialTimeframe) {
@@ -169,7 +172,7 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username, initi
         setPnlTimeframe(timeframeToUse);
       }
     }
-  }, [initialTimeframe, isOpen, pnlTimeframe]);
+  }, [initialTimeframe, isOpen]);
 
   // Track previous user address to detect changes
   const prevUserAddressRef = useRef<string>("");
