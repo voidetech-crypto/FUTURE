@@ -6,7 +6,7 @@ import { usePolymarketSubgraphMarkets } from "@/react-app/hooks/usePolymarketSub
 import { formatYesPrice, formatNoPrice } from "@/react-app/utils/priceFormat";
 import { Card } from "@/react-app/components/ui/Card";
 // Memoized market row to prevent unnecessary re-renders
-const MarketRow = memo(({ market, index, navigate, onMarketClick, showWatchlist, isWatched, onWatchlistToggle, onCopy, isLast, isWalletPanelOpen }: { market: any; index: number; navigate: (path: string) => void; onMarketClick?: (market: any) => void; showWatchlist?: boolean; isWatched?: boolean; onWatchlistToggle?: (marketId: string) => void; onCopy?: () => void; isLast?: boolean; isWalletPanelOpen?: boolean }) => {
+const MarketRow = memo(({ market, index, navigate, onMarketClick, showWatchlist, isWatched, onWatchlistToggle, onCopy, isLast, viewportWidth }: { market: any; index: number; navigate: (path: string) => void; onMarketClick?: (market: any) => void; showWatchlist?: boolean; isWatched?: boolean; onWatchlistToggle?: (marketId: string) => void; onCopy?: () => void; isLast?: boolean; viewportWidth: number }) => {
   const [copied, setCopied] = useState(false);
   
   // Safety check
