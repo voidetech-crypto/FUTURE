@@ -35,7 +35,7 @@ const MarketRow = memo(({ market, index, navigate, onMarketClick, showWatchlist,
   };
 
   return (
-    <div className={`p-2 cursor-pointer transition-colors group hover:bg-gray-800/50 ${!isLast ? 'border-b border-gray-800' : ''} ${index % 2 === 0 ? 'lg:border-r border-gray-800' : ''}`} onClick={handleClick}>
+    <div className={`p-2 cursor-pointer transition-colors group hover:bg-gray-800/50 ${!isLast ? 'border-b border-gray-800' : ''} ${index % 2 === 0 && viewportWidth > 1400 ? 'border-r border-gray-800' : ''}`} onClick={handleClick}>
       <div className="flex items-center gap-2 justify-between">
         {/* Image box */}
         <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center overflow-hidden rounded-md">
@@ -78,7 +78,7 @@ const MarketRow = memo(({ market, index, navigate, onMarketClick, showWatchlist,
           </div>
           <div className="flex items-center gap-1 text-sm text-gray-400">
             <span>{typeof market.category === 'string' ? market.category : (market.category?.name || market.category?.label || 'Other')}</span>
-            {market.endDate && (() => {
+            {market.endDate && viewportWidth > 1200 && (() => {
               try {
                 const endDate = new Date(market.endDate);
                 if (!isNaN(endDate.getTime())) {
@@ -87,7 +87,7 @@ const MarketRow = memo(({ market, index, navigate, onMarketClick, showWatchlist,
                   const month = months[endDate.getMonth()];
                   const year = endDate.getFullYear();
                   const daySuffix = day === 1 || day === 21 || day === 31 ? 'st' : day === 2 || day === 22 ? 'nd' : day === 3 || day === 23 ? 'rd' : 'th';
-                  return <span className="hidden lg:inline">• {month} {day}{daySuffix} {year}</span>;
+                  return <span>• {month} {day}{daySuffix} {year}</span>;
                 }
               } catch (e) {
                 // Invalid date
@@ -95,8 +95,8 @@ const MarketRow = memo(({ market, index, navigate, onMarketClick, showWatchlist,
               return null;
             })()}
             <span>• {market.volume}</span>
-            {market.volume24hr && market.volume24hr !== "$0" && (market.volume24hrNum || 0) > 0 && (
-              <span className="hidden md:inline">• {market.volume24hr}</span>
+            {market.volume24hr && market.volume24hr !== "$0" && (market.volume24hrNum || 0) > 0 && viewportWidth > 900 && (
+              <span>• {market.volume24hr}</span>
             )}
           </div>
         </div>
@@ -214,9 +214,22 @@ export default function MarketOverview({ showAllMarkets = false, defaultLimit = 
   const [showNotification, setShowNotification] = useState(false);
   const [showSearchDropdown, setShowSearchDropdown] = useState(false);
   const [isSearchFocused, setIsSearchFocused] = useState(false);
+  const [viewportWidth, setViewportWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1920);
   const searchRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const isUpdatingWatchlistRef = useRef(false);
+  
+  // Track viewport width for responsive hiding
+  useEffect(() => {
+    const handleResize = () => {
+      setViewportWidth(window.innerWidth);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Initial call
+    
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   // Watchlist state - store in localStorage for persistence (use array to maintain insertion order)
   const [watchlist, setWatchlist] = useState<string[]>(() => {
     try {
@@ -628,7 +641,7 @@ export default function MarketOverview({ showAllMarkets = false, defaultLimit = 
       <div className="flex-1 min-h-0 flex flex-col">
           <div className="flex-1 min-h-0 overflow-y-auto scrollable-content">
             <Card className="bg-gray-900 border border-gray-800 rounded-md overflow-hidden">
-              <div className="grid grid-cols-1 lg:grid-cols-2">
+              <div className={`grid ${viewportWidth > 1400 ? 'grid-cols-2' : 'grid-cols-1'}`}>
             {marketsLoading ? (
               <>
                 {[...Array(80)].map((_, index) => (
@@ -703,7 +716,7 @@ export default function MarketOverview({ showAllMarkets = false, defaultLimit = 
                       onWatchlistToggle={handleWatchlistToggle}
                       onCopy={handleCopyNotification}
                       isLast={isLast}
-                      isWalletPanelOpen={isWalletPanelOpen}
+                      viewportWidth={viewportWidth}
                     />
                   );
                 } catch (error) {

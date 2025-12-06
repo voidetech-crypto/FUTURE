@@ -70,7 +70,7 @@ export default function WalletPanel({ isOpen, onClose }: WalletPanelProps) {
 
       {/* Main Content - Trades Table */}
       {activeTab === "Trades" && (
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto overflow-x-hidden">
           <table className="w-full">
             <thead className="sticky top-0 bg-[#0a0a0a] border-b border-gray-800">
               <tr>
