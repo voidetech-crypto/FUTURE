@@ -35,7 +35,7 @@ const MarketRow = memo(({ market, index, navigate, onMarketClick, showWatchlist,
   };
 
   return (
-    <div className={`p-2 cursor-pointer transition-colors group hover:bg-gray-800/50 ${!isLast ? 'border-b border-gray-800' : ''} ${index % 2 === 0 ? 'min-[1170px]:border-r border-gray-800' : ''}`} onClick={handleClick}>
+    <div className={`p-2 cursor-pointer transition-colors group hover:bg-gray-800/50 ${!isLast ? 'border-b border-gray-800' : ''} ${index % 2 === 0 ? 'lg:border-r border-gray-800' : ''}`} onClick={handleClick}>
       <div className="flex items-center gap-2 justify-between">
         {/* Image box */}
         <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center overflow-hidden rounded-md">
@@ -87,7 +87,7 @@ const MarketRow = memo(({ market, index, navigate, onMarketClick, showWatchlist,
                   const month = months[endDate.getMonth()];
                   const year = endDate.getFullYear();
                   const daySuffix = day === 1 || day === 21 || day === 31 ? 'st' : day === 2 || day === 22 ? 'nd' : day === 3 || day === 23 ? 'rd' : 'th';
-                  return <span>• {month} {day}{daySuffix} {year}</span>;
+                  return <span className="hidden lg:inline">• {month} {day}{daySuffix} {year}</span>;
                 }
               } catch (e) {
                 // Invalid date
@@ -96,7 +96,7 @@ const MarketRow = memo(({ market, index, navigate, onMarketClick, showWatchlist,
             })()}
             <span>• {market.volume}</span>
             {market.volume24hr && market.volume24hr !== "$0" && (market.volume24hrNum || 0) > 0 && (
-              <span className={isWalletPanelOpen ? "hidden xl:inline" : ""}>• {market.volume24hr}</span>
+              <span className="hidden md:inline">• {market.volume24hr}</span>
             )}
           </div>
         </div>
@@ -628,7 +628,7 @@ export default function MarketOverview({ showAllMarkets = false, defaultLimit = 
       <div className="flex-1 min-h-0 flex flex-col">
           <div className="flex-1 min-h-0 overflow-y-auto scrollable-content">
             <Card className="bg-gray-900 border border-gray-800 rounded-md overflow-hidden">
-              <div className="grid grid-cols-1 min-[1170px]:grid-cols-2">
+              <div className="grid grid-cols-1 lg:grid-cols-2">
             {marketsLoading ? (
               <>
                 {[...Array(80)].map((_, index) => (
