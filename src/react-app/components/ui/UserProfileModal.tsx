@@ -1039,8 +1039,10 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username, initi
                                     className="border-b border-gray-800/50 hover:bg-gray-900/50 transition-colors cursor-pointer"
                                     onClick={() => {
                                       // Create market object from position data
+                                      // Use conditionId if marketId looks like a hex string, otherwise use as id
+                                      const isHexId = position.marketId?.startsWith('0x');
                                       setSelectedMarket({
-                                        id: position.marketId,
+                                        ...(isHexId ? { conditionId: position.marketId } : { id: position.marketId }),
                                         title: position.marketTitle,
                                         image: position.image
                                       });
@@ -1153,8 +1155,10 @@ export function UserProfileModal({ isOpen, onClose, userAddress, username, initi
                               onClick={() => {
                                 // Create market object from activity data
                                 if (activity.marketId) {
+                                  // Use conditionId if marketId looks like a hex string, otherwise use as id
+                                  const isHexId = activity.marketId.startsWith('0x');
                                   setSelectedMarket({
-                                    id: activity.marketId,
+                                    ...(isHexId ? { conditionId: activity.marketId } : { id: activity.marketId }),
                                     title: activity.marketTitle
                                   });
                                 }
