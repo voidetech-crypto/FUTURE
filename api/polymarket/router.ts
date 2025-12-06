@@ -1894,8 +1894,9 @@ polymarketRouter.get("/user/:address/profile", async (c) => {
       const shares = parseFloat(pos.shares || pos.size || pos.amount || "0");
       const avgPrice = parseFloat(pos.avgPrice || pos.averagePrice || pos.avg || "0");
       
-      // Get current/exit price for closed positions
+      // Get current/exit price for closed positions - prioritize curPrice
       const currentPrice = parseFloat(
+        pos.curPrice ||
         pos.exitPrice ||
         pos.currentPrice || 
         pos.current || 
